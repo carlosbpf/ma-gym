@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Remote traffic junction </title>
+     <style>
+      body {
+        margin: 0;
+      }
+      .directionsBack{
+        border-color: darkblue;
+        border-radius: 21px;
+        border-style: solid;
+        background-color: darkblue;
+        color: white;
+        font-family: sans-serif;
+        padding: 2px;
+        margin: 2px;
+      }
+      .mainBoard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      .headerInfo {
+          padding-top: 30px;
+          padding-bottom: 30px;
+          font-size: 15pt;
+          text-align: center;
+      }
+      .footerInfo {
+          padding-top: 30px;
+          padding-bottom: 30px;
+          font-size: 10pt;
+      }
+      canvas {border:0px solid #000}
+      canvas:focus {
+        border:0px solid #000;
+      }
+      .goOn {
+        background-color: green;
+        border-width: inherit;
+        color: white;
+        font-weight: bold;
+      }
+      .goOnOff {
+        background-color: #4b604b;
+        border-width: inherit;
+        color: white;
+      }
+
+      .breakOn {
+        background-color: #e50000;
+        border-width: inherit;
+        color: white;
+        font-weight: bold;
+      }
+      .breakOnOff {
+        background-color: #5d3a3a;
+        border-width: inherit;
+        color: white;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="mainBoard">
+      <div class="headerInfo">{{ header_text | safe }}</div>
+      <div id="gameSetup" style="display: none">
+        <table style="margin-bottom: 5px">
+          <tr><td>Your car color is</td><td><div id="carColor" style="width: 10px;height: 10px;"></div></td></tr>
+          <tr><td>Your destination is:</td><td><span id="carDestination" class="directionsBack"></span></td></tr>
+        </table>
+        <div style="background-color: lightblue;border-radius: 15px;padding: 15px;">
+          Your next action: <button id="go_btn" class="goOnOff"
+                                    onclick="handleOnClick()">GO</button> |
+          <button id="stop_btn" onclick="handleBreakClick()"
+                  class="breakOn">STOP</button>
+        </div>
+      </div>
+      <div id="messageDisplay">Waiting for other players ...</div>
+      <table>
+        <tr>
+          <td></td>
+          <td style="text-align: center;margin-bottom: 5px"><span class="directionsBack">N</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="directionsBack">W</span></td>
+          <td><canvas id='canvasRef' width="422" height="422" tabindex="-1"></canvas></td>
+          <td><span class="directionsBack">E</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td style="text-align: center"><span class="directionsBack">S</span></td>
+          <td></td>
+        </tr>
+      </table>
+
+      <div class="footerInfo"><span id="footerInfo"></span></div>
+    </div>
+  </body>
+
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script type="text/javascript" src="/static/js/index.js"></script>

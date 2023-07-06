@@ -131,7 +131,14 @@ class TrafficJunction(gym.Env):
             self._obs_low = np.tile(self._obs_low, self.n_agents)
         self.observation_space = MultiAgentObservationSpace([spaces.Box(self._obs_low, self._obs_high)
                                                              for _ in range(self.n_agents)])
-
+    def get_agent_setup(self):
+        cat = []
+        for agent_i in range(self.n_agents):
+            rout = self._agents_routes[agent_i]
+            pos = self.agent_pos[agent_i];
+            # print('ROUTE: {} , Initial position {}'.format(rout, str(pos)))
+            cat.append({ "route": rout, "origin": pos})
+        return cat
     def action_space_sample(self):
         return [agent_action_space.sample() for agent_action_space in self.action_space]
 
@@ -155,6 +162,8 @@ class TrafficJunction(gym.Env):
                 self.curr_cars_count += 1
                 self._on_the_road[agent_i] = True
                 self._agents_routes[agent_i] = random.randint(1, self._n_routes)  # [1,3] (inclusive)
+                print('Agent index: {} route Index {} route translated {} '.format(agent_i, self._agents_routes[agent_i],
+                      self._destination[self._agents_routes[agent_i]-1]))
             self.__update_agent_view(agent_i)
 
         self.__draw_base_img()
@@ -199,7 +208,7 @@ class TrafficJunction(gym.Env):
         :type agent_i: int
 
         :return: boolean stating true or false
-        :rtype: bool  
+        :rtype: bool
         """
         pos = self.agent_pos[agent_i]
         if pos in self._destination:
@@ -231,7 +240,7 @@ class TrafficJunction(gym.Env):
             # location
             _agent_i_obs += [pos[0] / (self._grid_shape[0] - 1), pos[1] / (self._grid_shape[1] - 1)]  # coordinates
 
-            # route 
+            # route
             route_agent_i = np.zeros(self._n_routes)
             route_agent_i[self._agents_routes[agent_i] - 1] = 1
 
@@ -311,7 +320,7 @@ class TrafficJunction(gym.Env):
 
         # checks if there is a collision; this is done in the __update_agent_pos method
         # we still need to check both agent_dones and on_the_road because an agent may not be done
-        # and have not entered the road yet 
+        # and have not entered the road yet
         for agent_i, action in enumerate(agents_action):
             if not self._agent_dones[agent_i] and self._on_the_road[agent_i]:
                 self._agent_step_count[agent_i] += 1  # agent step count
@@ -353,6 +362,7 @@ class TrafficJunction(gym.Env):
                 self._agents_routes[agent_to_enter] = random.randint(1, self._n_routes)  # (1, 3)
                 self.__update_agent_view(agent_to_enter)
 
+        print('Step: {} Reward: {} Collisions {}'.format(self._step_count, rewards, step_collisions))
         return self.get_agent_obs(), rewards, self._agent_dones, {'step_collisions': step_collisions}
 
     def __get_next_direction(self, route, agent_i):
@@ -429,7 +439,7 @@ class TrafficJunction(gym.Env):
 
     def reset(self):
         """
-        Resets the environment when a terminal state is reached. 
+        Resets the environment when a terminal state is reached.
 
         :return: list with the observations of the agents
         :rtype: list

@@ -3,10 +3,10 @@ import argparse
 import gym
 
 from ma_gym.wrappers import Monitor
-
+#Checkers-v0
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Interactive Agent for ma-gym')
-    parser.add_argument('--env', default='Checkers-v0',
+    parser.add_argument('--env', default='TrafficJunction10-v0',
                         help='Name of the environment (default: %(default)s)')
     parser.add_argument('--episodes', type=int, default=1,
                         help='episodes (default: %(default)s)')

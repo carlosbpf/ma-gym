@@ -36,6 +36,7 @@ for i, observability in enumerate([False, True]):
         )
 
     for num_max_cars in [4, 10]:
+        #print('TrafficJunction{}-v'.format(num_max_cars) + str(i))
         register(
             id='TrafficJunction{}-v'.format(num_max_cars) + str(i),
             entry_point='ma_gym.envs.traffic_junction:TrafficJunction',

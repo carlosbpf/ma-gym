@@ -12,7 +12,7 @@ extras = {
 extras['all'] = [item for group in extras.values() for item in group]
 
 setup(name='ma_gym',
-      version='0.0.14',
+      version='0.0.13',
       description='A collection of multi agent environments based on OpenAI gym.',
       long_description_content_type='text/markdown',
       long_description=open(path.join(path.abspath(path.dirname(__file__)), 'README.md'), encoding='utf-8').read(),
@@ -28,17 +28,22 @@ setup(name='ma_gym',
           'cloudpickle==2.0.0',
           'gym>=0.19.0,<=0.20.0',
           'pillow>=7.2.0',
-          'six>=1.16.0'
+          'six>=1.16.0',
+          'Flask>=2.1.0',
+          'Flask-SocketIO>=4.3.0',
+          'python-engineio==3.13.0',
+          'python-socketio==4.6.0',
+          'Jinja2>=3.0',
+          'Werkzeug==2.0.3',
+          'simple-websocket'
       ],
       extras_require=extras,
       tests_require=extras['test'],
-      python_requires='>=3.6, <3.12',
+      python_requires='>=3.6',
       classifiers=[
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: 3.8',
           'Programming Language :: Python :: 3.9',
-          'Programming Language :: Python :: 3.10',
-          'Programming Language :: Python :: 3.11',
       ],
       )
