@@ -16,7 +16,7 @@ if __name__ == '__main__':
           ' for agent 1 and 1 for agent 2)')
 
     env = gym.make('ma_gym:{}'.format(args.env))
-    env = Monitor(env, directory='recordings', force=True)
+    env = Monitor(env, directory='recordings', force=False)
     for ep_i in range(args.episodes):
         done_n = [False for _ in range(env.n_agents)]
         ep_reward = 0
