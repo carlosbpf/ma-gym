@@ -62,7 +62,7 @@ def index(room_id, subject_name):
     if room_id not in ROOMS:
         print('Setting up room: ' + room_id)
         env = gym.make('ma_gym:{}'.format(args.env))
-        env = Monitor(env, directory='recordings', force=True)
+        # env = Monitor(env, directory='recordings', force=True)
         try:
             curr_id = FREE_IDS.get(block=False)
             assert FREE_MAP[curr_id], "Current id is already in use"
