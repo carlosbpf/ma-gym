@@ -60,7 +60,7 @@ class TrafficJunction(gym.Env):
         assert 0 <= arrive_prob <= 1, "arrive probability should be in range [0,1]"
         assert len(grid_shape) == 2, 'only 2-d grids are acceptable'
         assert 1 <= max_steps, "max_steps should be more than 1"
-
+        self._signaling = False
         self._grid_shape = grid_shape
         self.n_agents = n_max
         self._max_steps = max_steps
@@ -436,6 +436,8 @@ class TrafficJunction(gym.Env):
             self.__update_agent_view(agent_i)
 
         return False
+    def set_signaling(self):
+        self._signaling = True
 
     def reset(self):
         """
@@ -462,8 +464,11 @@ class TrafficJunction(gym.Env):
 
         for agent_i in range(self.n_agents):
             if not self._agent_dones[agent_i] and self._on_the_road[agent_i]:
+                text = str(agent_i + 1)
+                if self._signaling:
+                    text = ACTION_TEXT[self._agents_routes[agent_i]]
                 fill_cell(img, self.agent_pos[agent_i], cell_size=CELL_SIZE, fill=AGENTS_COLORS[agent_i])
-                write_cell_text(img, text=str(agent_i + 1), pos=self.agent_pos[agent_i], cell_size=CELL_SIZE,
+                write_cell_text(img, text=text, pos=self.agent_pos[agent_i], cell_size=CELL_SIZE,
                                 fill='white', margin=0.3)
 
         img = np.asarray(img)
@@ -504,7 +509,11 @@ AGENTS_COLORS = [
     "brown",
     "grey"
 ]
-
+ACTION_TEXT = {
+     1: ' ',
+     2: '>', #u"\u2190",
+     3: '<', #u"\u2192",
+}
 ACTION_MEANING = {
     0: "GAS",
     1: "BRAKE",

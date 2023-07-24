@@ -91,17 +91,19 @@ def on_connect():
 def on_join(data):
     user_id = request.sid
     room_id = data.get("room_id", 0)
-    set_curr_room(user_id, room_id)
-    print('Joining user : ' + user_id + ' at room: ' + room_id)
-    with SUBJECTS[user_id]:
-        game = get_curr_game(user_id)
-        join_room(room_id)
-        with game.lock:
-            idx = game.add_subject(user_id)
-            if game.subjects_checked_in() == 4:
-                socketio.start_background_task(play_game, game)
-            else:
-                socketio.emit('waiting_game')
+    game = get_curr_game(user_id)
+    if game is None:
+        set_curr_room(user_id, room_id)
+        print('Joining user : ' + user_id + ' at room: ' + room_id)
+        with SUBJECTS[user_id]:
+            game = get_curr_game(user_id)
+            join_room(room_id)
+            with game.lock:
+                idx = game.add_subject(user_id)
+                if game.subjects_checked_in() == 4:
+                    socketio.start_background_task(play_game, game)
+                else:
+                    socketio.emit('waiting_game')
 AGENTS_COLORS = [
     "red",
     "blue",
@@ -121,7 +123,10 @@ def play_game(game):
         ep_reward = 0
 
         obs_n = env.reset()
-        setup = env.get_agent_setup();
+        setup = env.get_agent_setup()
+        if args.signaling:
+            env.set_signaling()
+
         for agent_i in range(env.n_agents):
             socketio.emit('game_setup',
                            {"socket_id": game.players[agent_i], "index": agent_i, "start": '',
@@ -210,6 +215,9 @@ if __name__ == '__main__':
                         help='Name of the environment (default: %(default)s)')
     parser.add_argument('--episodes', type=int, default=1,
                         help='episodes (default: %(default)s)')
+
+    parser.add_argument('--signaling', type=int, default=0,
+                        help='if signaling should be on: (default: %(default)s)')
     args = parser.parse_args()
 
 class GameWrapper():
